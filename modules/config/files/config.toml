@@ -1,0 +1,40 @@
+concurrent = 10
+
+log_level = "info"
+log_format = "text"
+
+[[runners]]
+name = "${runner_name}"
+url = "${runner_url}"
+token = "${runner_token}"
+
+executor = "docker-autoscaler"
+
+[runners.docker]
+image = "alpine:latest"
+
+[runners.autoscaler]
+plugin = "hetznercloud/fleeting-plugin-hetzner:latest"
+
+capacity_per_instance = 2
+max_instances = 5
+max_use_count = 0
+
+instance_ready_command = "cloud-init status --wait || test $? -eq 2"
+
+[runners.autoscaler.plugin_config]
+name = "${hcloud_name}"
+token = "${hcloud_token}"
+
+location = "${hcloud_location}"
+server_type = "${hcloud_server_type}"
+image = "debian-12"
+
+user_data = """${hcloud_user_data}"""
+
+[runners.autoscaler.connector_config]
+use_external_addr = true
+
+[[runners.autoscaler.policy]]
+idle_count = 4
+idle_time = "20m0s"

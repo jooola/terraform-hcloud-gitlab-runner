@@ -1,0 +1,21 @@
+[Unit]
+Description=GitLab Runner
+After=network.target
+
+[Service]
+Restart=always
+RestartSec=5
+
+KillMode=mixed
+KillSignal=SIGQUIT
+TimeoutStopSec=3600
+
+User=gitlab-runner
+WorkingDirectory=/home/gitlab-runner
+Environment=CONFIG_FILE=/home/gitlab-runner/config.toml
+
+ExecStartPre=/usr/local/bin/gitlab-runner fleeting install
+ExecStart=/usr/local/bin/gitlab-runner run
+
+[Install]
+WantedBy=multi-user.target
