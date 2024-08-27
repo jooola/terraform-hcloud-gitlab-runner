@@ -34,5 +34,3 @@ variable "hcloud_ssh_keys" {
   type        = list(string)
   default     = []
 }
-
-

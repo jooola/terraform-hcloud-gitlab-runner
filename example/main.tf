@@ -30,5 +30,3 @@ module "runner" {
   hcloud_server_type = "cpx21"
   hcloud_ssh_keys    = [for i in data.hcloud_ssh_keys.all.ssh_keys : i.name]
 }
-
-
