@@ -17,3 +17,37 @@ jobs:
           python-version: 3.x
 
       - uses: pre-commit/action@v3.0.1
+
+  example:
+    runs-on: ubuntu-latest
+
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
+
+    permissions:
+      id-token: write # Required by hetznercloud/tps-action
+
+    defaults:
+      run:
+        working-directory: example
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: v1.8.1 # renovate: datasource=github-releases depName=opentofu/opentofu
+          tofu_wrapper: false
+
+      - uses: hetznercloud/tps-action@main
+
+      - name: Init
+        run: tofu init
+
+      - name: Deploy
+        run: tofu apply -auto-approve
+
+      - name: Cleanup
+        if: always()
+        run: tofu apply -auto-approve -destroy
